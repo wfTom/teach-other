@@ -3,12 +3,13 @@ import { NextPage } from 'next'
 import Head from 'next/head'
 import Nav from '../components/nav'
 
-const IndexPage: NextPage = () => {
+const AppPage: NextPage = () => {
   const [session, loading] = useSession()
 
   return (
     <div>
       <Nav />
+      <h1>Bem vindo a página App</h1>
       {!session && (
         <>
           Not signed in <br />
@@ -30,4 +31,4 @@ const IndexPage: NextPage = () => {
   )
 }
 
-export default IndexPage
+export default AppPage
