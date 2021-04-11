@@ -35,6 +35,14 @@ export default async (
       courses,
       available_hours,
       available_locations
+    }: {
+      name: string
+      email: string
+      cellphone: string
+      teacher: boolean
+      courses: string[]
+      available_hours: Record<string, number[]>
+      available_locations: string[]
     } = req.body
 
     if (!teacher) {
@@ -54,15 +62,26 @@ export default async (
         res.status(400).json({ error: 'Missing body parameter' })
         return
       }
-    } // else {
+    }
+
     const { db } = await connect()
+
+    //check if email exists
+    const lowerCaseEmail = email.toLowerCase()
+    const emailExists = await db
+      .collection('users')
+      .findOne({ email: lowerCaseEmail })
+    if (emailExists) {
+      res.status(400).json({ error: `E-mail ${lowerCaseEmail} already exists` })
+      return
+    }
 
     const response = await db.collection('users').insertOne({
       name,
-      email,
+      email: lowerCaseEmail,
       cellphone,
       teacher,
-      coins: 1,
+      coins: 100,
       courses: courses || [],
       available_hours: available_hours || {},
       available_locations: available_locations || [],
@@ -71,7 +90,7 @@ export default async (
     })
 
     res.status(200).json(response.ops[0])
-    // }
+    //* Show User Profile
   } else if (req.method === 'GET') {
     const { _id } = req.body
 

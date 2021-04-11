@@ -2,7 +2,7 @@
 import { ObjectID } from 'bson'
 import { NextApiRequest, NextApiResponse } from 'next'
 
-import connect from '../../utils/database'
+import connect from '../../../utils/database'
 
 interface ErrorResponseType {
   error: string
@@ -16,10 +16,10 @@ interface SuccessResponseType {
   coins: Int16Array
   teacher: boolean
   courses: string[]
-  available_hours: object
+  available_hours: Record<string, number[]>
   available_locations: string[]
-  reviews: object[]
-  appointments: object[]
+  reviews: Record<string, unknown>[]
+  appointments: Record<string, unknown>[]
 }
 
 export default async (
@@ -71,21 +71,26 @@ export default async (
     // res.status(200).json(response.ops[0])
     // }
   } else if (req.method === 'GET') {
-    const { courses }: { courses: string } = req.body
+    const id = req.query.id as string
 
-    if (!courses) {
+    if (!id) {
       res.status(400).json({ error: 'Missing courses name on request body' })
       return
     }
 
-    const { db } = await connect()
-    const response = await db
-      .collection('users')
-      .find({ courses: { $in: [new RegExp(`^${courses}`, 'i')] } })
-      .toArray()
+    let _id: ObjectID
+    try {
+      _id = new ObjectID(id)
+    } catch {
+      res.status(400).json({ error: 'Missing teacher id on request body' })
+      return
+    }
 
-    if (response.length === 0) {
-      res.status(400).json({ error: 'Course not found' })
+    const { db } = await connect()
+    const response = await db.collection('users').findOne({ _id })
+
+    if (!response) {
+      res.status(400).json({ error: `Teacher with id ${_id} not found` })
       return
     }
 
