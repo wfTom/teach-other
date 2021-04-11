@@ -2,6 +2,7 @@ GET http://localhost:3000/api/user
 
 ###
 
+//Dados para aluno
 POST http://localhost:3000/api/user
 Content-Type: application/json
 
@@ -9,7 +10,28 @@ Content-Type: application/json
   "name": "teste",
   "email": "teste",
   "cellphone":"1234567890",
-  "teacher":"false"
+  "teacher":false
 }
 
 ###
+
+//Dados para professor
+POST http://localhost:3000/api/user
+Content-Type: application/json
+
+{
+  "name": "teste",
+  "email": "teste",
+  "cellphone":"1234567890",
+  "teacher":false
+}
+
+###
+
+//Show Profile
+GET http://localhost:3000/api/user
+Content-Type: application/json
+
+{
+  "_id": "60711668c320c9282439fb19"
+}
